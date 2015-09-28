@@ -1,0 +1,10 @@
+
+These compile scripts assume csh.
+
+They have been replaced by scripts
+based on bash, since csh is becoming
+less common.
+
+The old (csh) scripts are in the
+CSHcom directory.
+

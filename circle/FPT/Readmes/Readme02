@@ -1,0 +1,26 @@
+
+acom  fname.c
+  invokes the C compiler and links in with all of
+  the graphical and math routines, producing the
+  executable, a.out
+
+bcom fname.c
+  does the same thing but first preprocesses your
+  source file to allow for doubles to be used
+  as subscripts in arrays
+
+
+
+
+
+
+ycom  fname.c
+  invokes the C++ compiler and links in with all of
+  the graphical and math routines, producing the
+  executable, a.out
+
+zcom fname.c
+  does the same thing (C++) but first preprocesses your
+  source file to allow for doubles to be used
+  as subscripts in arrays
+

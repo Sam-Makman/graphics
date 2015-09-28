@@ -1,0 +1,34 @@
+
+May 10, 2011
+
+
+You decided to switch to C++ to get cin,cout
+
+Along the way you adjusted the interface of 
+most of the graphics functions to explicitly
+take doubles instead of ints because the g++
+compile would generate warnings when doubles
+were passed to int parameters.  You could have
+suppressed all warnings with the "-w" switch
+but this seemed a bad idea.
+
+Also, some "void *" params were changed to
+"const void *" to silence g++ warnings.  The
+C compiler doesn't mind these.
+
+
+You now have 4 compile scripts:
+acom and bcom work with C
+
+ycom and zcom work with C++ but will also compile the
+   inD,outD  i/o  tools.
+
+bcom and zcom will preprocess the code so that doubles
+can be used as array subscripts....acom and ycom will
+NOT do this.
+
+ycom and zcom invoke a version of the header file, FPT.h,
+that is mildly different from the one used by acom and bcom.
+
+
+

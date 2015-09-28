@@ -1,0 +1,206 @@
+
+Linux Instructions for Installing the 
+
+Freshman's Programming Toolkit
+May 2007
+Principal Author : J.Ely
+
+//////////////////////////////////////////////////////////////////
+If you have Linux running on an Intel or compatible chip,
+ there is a good chance that you can simply do steps 1, 3 ,and 6.
+ Try those first and see if you get lucky.  If not, look at
+ the details.
+//////////////////////////////////////////////////////////////////
+
+
+
+
+0. It is assumed you are on a Linux system with an X11 server
+   and the X11 programming support files have been installed.
+   This should be a simple matter of installing ALL X-related
+   stuff that Linux offers you when you first install Linux.
+   Some people have inadvertently chosen not to install the 
+   X11 programming supprt files and will need to go back and
+   incorporate them.
+
+   As a check :
+
+   0.1 issue the command,
+
+       whereis  X11
+
+       hopefully, you will see something like :
+
+       X11: /etc/X11  /usr/lib/X11  /usr/include/X11
+
+
+   0.2 issue the command,
+
+       ls   /usr/include/X11
+
+       it is a good sign if you see a bunch of names listed.
+       it is not good if the command tells you that there is
+          no such file or directory.
+
+   0.3 issue the command,
+
+       xdpyinfo
+
+       this should return a lot of info but somewhere there
+       should be some lines that somewhat resemble :
+
+       number of visuals:    2
+       default visual id:  0x21
+       visual:
+        visual id:    0x21
+        class:    TrueColor
+        depth:    24 planes
+        available colormap entries:    256 per subfield
+        red, green, blue masks:    0xff0000, 0xff00, 0xff
+        significant bits in color specification:    8 bits
+
+       what is important here is that our default visual
+       is TrueColor, has a depth of 24 planes, and has
+       red,green,blue masks:     0xff0000, 0xff00, 0xff
+
+    If these three commands pan out, you should be in business.
+
+
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+Now for the details of installing the Freshman Programming Toolkit :
+
+
+1. The usual expectation is that this Freshman Programming
+   Toolkit is installed in
+
+        /FPT
+
+   To do this :
+ 
+     become root
+     cd /
+     copy or otherwise download  FPT.tgz   to  /
+     tar xfz FPT.tgz   (this should create a directory called FPT)
+     ls                (you should now see the FPT directory)
+     cd FPT            (you are now in the FPT directory)
+     ls 
+       Now you should see the files
+          acom, bcom,
+       and the directories
+          Dotos, Examples. Source, and Readmes
+
+
+2. If you have chosen to install FPT in some other location you will
+   need to edit the two compile scripts, acom and bcom to reflect
+   where you actually installed this stuff.
+
+
+3. As root :
+   ln    -s  /FPT/acom       /usr/local/bin/acom
+   ln    -s  /FPT/bcom       /usr/local/bin/bcom
+   ln    -s  /FPT/ycom       /usr/local/bin/ycom
+   ln    -s  /FPT/zcom       /usr/local/bin/zcom
+
+   this assumes you've installed this stuff in /FPT
+
+
+4. You may need to recompile the   FPT/DotosC/*.o   files.
+   This can easily be done by moving into the FPT/Dotos
+   directory and issuing
+
+   ./compile_dotos
+
+
+   Similarly, recompile the files in FPT/DotosGPP
+
+
+
+   You should also move into the directory, ArrayFilter,
+   and issue the command,
+
+   ./compile
+
+   which will re-create the program, filter_arrays.exe
+   which is used by the bcom and zcom compilation scripts.
+
+
+
+5. It is very likely that others can already read and execute
+   what they need  but if not, you should make sure they can
+   read and execute the directories
+
+   /FPT
+   /FPT/Dotos
+   /FPT/Examples
+   /FPT/Source
+
+   that they can read and execute the files
+
+   /FPT/acom
+   /FPT/bcom
+
+   and that they can read the files
+
+   /FPT/Readme01
+   /FPT/Readme02
+   /FPT/Examples/*
+   /FPT/Dotos/*.o
+   /FPT/Source/*.h
+
+   You can discover the permissions by listing your files
+   with the -l flag, i.e.
+
+   As an example :
+
+   ls -l  acom
+
+   might show something like
+
+   -rwxr-xr--   and other info
+
+   Ignoring the first -,
+   the next three symbols show that the owner of the file
+   can rwx (read, write, and execute) the file.  The next 3
+   show the permissions of the group (ignore these) and the
+   last three show the permissions for others.  In this case
+   r-- indicates that others can read the file but not write
+   or execute it.  We don't want them to be able to write 
+   (alter) it but we do want them to be able to execute it
+   because it is a compile script, so we issue the command,
+
+   chmod o+x acom
+
+   Now the command,
+
+   ls -l acom    
+
+   should show 
+
+   -rwxr-xr-x   and other info
+
+   where the last x indicates that others can now execute
+   the file.
+
+
+
+6. As a test of the installation
+
+
+   cd Examples
+
+   acom t01a.c    [this will invoke the compile script, acom,
+                   to compile the sample program, t01a.c]
+   ./a.out        [run the program]
+
+
+   hopefully something visual happens.
+
+
+
+
+
+
+
+

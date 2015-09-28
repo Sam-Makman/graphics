@@ -1,0 +1,4 @@
+
+some environments are still 32 bit...you might need to
+modify the compile scripts to add the -m32 switch
+when cc is invoked.

@@ -1,0 +1,10 @@
+
+
+# g++  -c  -O1  -I../Source  ../Source/Non_graphics.c  ../Source/G_graphics.c  ../Source/X_graphics.c
+
+# g++  -c  -m32  -I../Source  ../Source/Non_graphics.c  ../Source/G_graphics.c  ../Source/X_graphics.c
+
+# g++  -c  -I../Source  ../Source/Non_graphics.c  ../Source/G_graphics.c  ../Source/X_graphics.c
+
+g++  -c  -I../Source -I../HeadersGPP  ../Source/Non_graphics.c  ../Source/G_graphics.c  ../Source/X_graphics.c
+

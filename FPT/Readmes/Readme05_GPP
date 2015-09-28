@@ -1,0 +1,12 @@
+
+in this version, X_graphics and G_graphics have been cleaned up
+so it can be compiled by g++ as well as by cc.
+
+this required a reorganization of the header file, G_graphics.h.
+in the old version, the header file itself was the source of the
+declaration of the storage for all of the function pointers.
+
+now the header file declares these as "extern" and the file
+G_graphics.c has the actual storage for the pointers.
+
+

@@ -1,0 +1,12 @@
+Aug 21, 2009
+
+#1 You can now draw into a back buffer that is much larger
+than the display.
+
+#2 Corrected (improved) what happens if window is resized.
+
+#3 Slight modification of conversion of double r,g,b
+to int r,g,b
+
+
+

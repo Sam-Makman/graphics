@@ -1,0 +1,3 @@
+
+With full 64-bit binaries, it is time to stop messing with
+the -m32 flag on your compile scripts

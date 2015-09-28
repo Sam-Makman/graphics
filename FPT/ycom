@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# The normal expectation is that all of this is installed in
+#          /FPT   
+# If not, you will have to edit this script to reflect where
+# you really installed it.
+
+
+clist=""
+
+for name in $@; do
+
+  bname=" $name"
+  clist=("$clist""$bname")
+
+done
+
+#echo $clist
+
+g++  -I/FPT/Source -I/FPT/HeadersGPP  /FPT/DotosGPP/*.o    $clist   -L/usr/X11R6/lib -lm -lX11 -lXext
+
+
+
+
+

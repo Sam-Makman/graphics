@@ -1,0 +1,1 @@
+cc filter_arrays.c -o filter_arrays.exe

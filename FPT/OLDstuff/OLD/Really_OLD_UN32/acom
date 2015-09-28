@@ -1,0 +1,68 @@
+#!/bin/csh
+
+# The normal expectation is that all of this is installed in
+#          /FPT   
+# If not, you will have to edit this script to reflect where
+# you really installed it.
+
+
+set rlist = ""
+set Ilist = ""
+
+
+foreach ncarg ($argv[*])
+
+  switch ($ncarg)
+
+   case *.c :
+    # do nothing if it is a .c file
+   breaksw
+
+   case -I* :
+    set Ilist = ($Ilist $ncarg)
+   breaksw
+
+   default :
+    set rlist = ($rlist  $ncarg)
+
+   breaksw
+
+  endsw
+
+end
+
+
+#echo "Ilist = " $Ilist
+#echo "rlist = " $rlist
+
+
+
+
+
+
+foreach cfile ($argv[*])
+
+  switch ($cfile)
+
+   case *.c :
+
+
+#turn on optimization wtih -O1
+     cp  $cfile  $cfile.temp878ab89.c
+#    cc -O1  -c  -I/FPT/Source  $Ilist   $cfile.temp878ab89.c
+     cc  -c -m32 -I/FPT/Source  $Ilist   $cfile.temp878ab89.c
+
+
+   breaksw
+
+  endsw
+
+end
+
+
+
+
+#cc -O1  /FPT/Dotos/*.o    *temp878ab89.o  $rlist   -L/usr/X11R6/lib -lm -lX11 -lXext
+cc   -m32 /FPT/Dotos/*.o    *temp878ab89.o  $rlist   -L/usr/X11R6/lib -lm -lX11 -lXext
+
+\rm   *temp878ab89*

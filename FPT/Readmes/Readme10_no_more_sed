@@ -1,0 +1,32 @@
+
+
+Formerly, bcom used the unix utility, sed, to
+replace array notation with arrays with subscripts
+cast to integers.
+
+This has now been replaced by a "C" program,
+
+bcomFilter/filter_arrays.exe
+
+This is actually a better solution since it
+will not replace the array notation if it occurs
+inside of a doubly quoted string and
+it is also good because bcom will now work on
+systems that don't have the unix utility, sed.
+
+Of course, when porting this to a new environment,
+it may well be necessary to recompile 
+
+bcomFilter/filter_arrays.exe
+
+Just cd into the directory, bcomFilter, and execute
+
+./compile
+
+This should remake, filter_arrays.exe
+
+
+
+
+
+

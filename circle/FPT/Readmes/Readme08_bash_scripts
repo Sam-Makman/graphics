@@ -1,0 +1,4 @@
+
+The bash scripts did not work in some situations, as when multiple include
+directories were specified because your concatenation operations in
+bash were not right...seems to be fixed now (aug 09)

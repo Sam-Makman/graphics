@@ -1,0 +1,16 @@
+
+If you are setting this up in Linux and in the /FPT
+directory as suggested,  then you can probably set all
+of FPT up by running the two "make_...." scripts AS root :
+
+
+
+./make_FPT
+
+./make_FPT_symbolic_links
+
+
+
+If there are no complaints, you are probably ready to go.
+
+

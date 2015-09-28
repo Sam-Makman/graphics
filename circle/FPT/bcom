@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# The normal expectation is that all of this is installed in
+#          /FPT   
+# If not, you will have to edit this script to reflect where
+# you really installed it.
+
+
+rlist=""
+Ilist=""
+
+
+for name in $@; do
+
+  bname=" $name"
+
+  case $name in
+    *.c)
+    # do nothing if it is a .c file
+      ;;
+    -I*)
+    Ilist=("$Ilist""$bname")
+      ;;
+    *)
+    rlist=("$rlist""$bname")
+      ;;
+
+  esac
+
+done
+
+
+
+#echo "Ilist = " $Ilist
+#echo "rlist = " $rlist
+
+
+
+for cfile in $@; do
+
+
+  case $cfile in
+    *.c)
+
+
+      /FPT/FileProcessors/filter_arrays.exe  $cfile $cfile.drawM.345ab29.c
+
+      cc   -c   -I/FPT/Source -I/FPT/HeadersC  $Ilist   $cfile.drawM.345ab29.c  
+
+
+      ;;
+    *)
+      ;;
+
+  esac
+
+done
+
+
+
+
+cc   /FPT/DotosC/*.o    *drawM.345ab29.o  $rlist   -L/usr/X11R6/lib -lm -lX11 -lXext
+
+\rm    *drawM.345ab29.*
+

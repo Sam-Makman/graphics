@@ -1,0 +1,4 @@
+cc  processing_tools.c  filter_arrays.c  -o   filter_arrays.exe
+
+cc  processing_tools.c  scom_processor.c  -o   scom_processor.exe
+

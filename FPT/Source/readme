@@ -1,0 +1,6 @@
+
+may9, 2011
+
+changed the interface of many functions from int
+params to double params so that g++ could pass
+doubles to them without giving warnings
