@@ -2,7 +2,6 @@
 #define WINDOW_WIDTH 600
 #define ROTATE_SPEED .05
 int numpoints[10], numpolys[10], poly_sizes[10][600], polygons[10][600][20];
-//double xy[2][argc][1000];
 double colors[10][600][3], xy[2][20][600];
 
 
@@ -111,9 +110,6 @@ int i;
     xy[0][pnum][i] = (WINDOW_WIDTH/2) + (cos(angle) * c);
     xy[1][pnum][i] = (WINDOW_WIDTH/2) + (sin(angle) * c);
   }
-
-
-
 }
 
 void display(int pnum){
@@ -162,6 +158,3 @@ while(1 == 1){
 	}
 }
 }
-
-
-
