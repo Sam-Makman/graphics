@@ -132,43 +132,26 @@ double sameSide(double ax, double ay, double bx, double by, double x1, double y1
 	return ((y1 - y2)*(ax - x1) + (x2 -x1)*(ay -y1))*((y1 - y2)*(bx - x1) + (x2 - x1)*(by - y1));
 }
 
-// void ssTest(){
-// 	double a = sameSide(1,1,1,1,2,2,10,10);
-// 	double b = sameSide(1,0,0,1,1,1,2,2);
-// 	double c = sameSide(10000,0,5.6,0,1,1,2,2);
-// 	double x = 60000000000000;
-// 	double d = sameSide(x,5000000000000,5000000000,6000000000000,1,1,2,2);
-// 	printf("Should be 0 a: %lf \n",a);
-// 		 printf("should be negative b : %lf \n",b);
-// 		printf("should be positive c %lf \n",c);
-// 		 printf("Negative d %lf \n", d);
-// }
 
 
 void intersect(double ret[2], double x1,double y1,double x2,double y2,double x3,double y3,double x4,double y4 ){
 	if(sameSide(x1,y1,x2,y2,x3,y3,x4,y4) > 0){
-		printf("x1 : %lf, y1: %lf \n x2 : %lf , y2 %lf \n", x1, y1, x2, y2);
-
 			printf("Both points on the same side at begining\n");
-			// exit(1);
-			// return;
+			exit(1);
 		}
 	double tx = x2;
 	double ty = y2;
 	double ox = x1;
 	double oy = y1;
-	printf("enter intersect\n");
 	while(1==1){
-		// printf("finding\n");
 		double side = sameSide(x1,y1,tx,ty,x3,y3,x4,y4);
-		if(sameSide(tx,ty,ox,oy,x3,y3,x4,y4) > 1){
+		if(sameSide(tx,ty,ox,oy,x3,y3,x4,y4) > 0){
 			printf("both points on same side\n");
 			break;
 		}
 		if(fabs((tx-ox)/2) < .000000001 && fabs((ty-oy)/2) <.0000000001 ) {
 			ret[0]=tx;
 			ret[1]=ty;
-			// printf("tx : %lf , ty: %lf \n", tx, ty);
 			return;
 		}
 		else if(side > 0){
@@ -196,76 +179,58 @@ void intersect(double ret[2], double x1,double y1,double x2,double y2,double x3,
 				ty = tempy;
 			}
 		
-			// printf(" %lf  %lf \n", ((tx-ox)/2),((ty-oy)/2));
 		}
 		else if(side == 0 ){
 			ret[0]=tx;
 			ret[1]=ty;
-			// printf("tx : %lf , ty: %lf \n", tx, ty);
+			
 			return;
 		}
 	}
 }
-void intersectTest(){
-	double ret[2], x1,x2,x3,x4,y1,y2,y3,y4;
-	x1 = 600;
-	y1 = 600;
-	x2 = 0;
-	y2 = 0;
-	x3 = 300;
-	y3 = 500;
-	x4 = 150;
-	y4 = 200;
-	intersect(ret, x1,y1,x2,y2,x3,y3,x4,y4);
-	printf("Test x: %lf  , y: %lf  \n", ret[0], ret[1]);
-}
+
 
 int clip(double xp[], double yp[], int size){
 	int i, j;
 	int count = 0;
 	double tempx[1000], tempy[1000];
-	printf("init\n");
+	// printf("init\n");
 	for(i=0; i<size;i++){
 		tempx[i]=xp[i];
 		tempy[i]=yp[i];
-		printf(" x: %lf y: %lf \n", tempx[i],tempy[i]);
 		count++;
 	}
 
-	printf("\n\n");
 	for(i=0;i<cSize;i++){
 		double clipx[1000],clipy[1000];
 		int tcount = 0;
 		int f;
 		// printf("Coords \n");
-		for(f=0; f<count; f++){
-			printf("x : %lf , y: %lf \n", tempx[f], tempy[f]);
-		}
+		
 		for(j=0;j<count;j++){
 
 		double spointSide = sameSide(center[0], center[1], tempx[j], tempy[j], cx[i], cy[i], cx[(i+1)%cSize] ,cy[(i+1)%cSize]);
 		double epointSide = sameSide(center[0], center[1], tempx[(j+1)%count], tempy[(j+1)%count], cx[i], cy[i],cx[(i+1)%cSize] ,cy[(i+1)%cSize]);
-		printf("Startpoint : %lf, endpoint : %lf \n", spointSide, epointSide);
+		
 		if(spointSide > 0 && epointSide > 0){//both inside 
-			printf("start in end in\n");
 			clipx[tcount] = tempx[(j+1)%count];
 			clipy[tcount] = tempy[(j+1)%count];
 			tcount++; 
 		}
 		else if(spointSide < 0 && epointSide < 0){//both outside 
-			printf("start out end out\n");
+
 		}
 		else if(spointSide > 0 && epointSide < 0){//start in end out 
-			printf("start in end out \n");
 			double point[2];
-			intersect(point,tempx[j],tempy[j],tempx[(j+1)%count],tempy[(j+1)%count],cx[i],cy[i],cx[(i+1)%count],cy[(i+1)%count] );
+
+			intersect(point,tempx[j],tempy[j],tempx[(j+1)%count],tempy[(j+1)%count],cx[i],cy[i],cx[(i+1)%cSize],cy[(i+1)%cSize] );
 			clipx[tcount] = point[0];
 			clipy[tcount] = point[1];
 			tcount++; 
 		}else if(spointSide < 0 && epointSide > 0){//start out end in 
-			printf("start out end in \n");//broken
+	
 			double point[2];
-			intersect(point,tempx[(j+1)%count],tempy[(j+1)%count],tempx[j],tempy[j],cx[i],cy[i],cx[(i+1)%count],cy[(i+1)%count] );
+			intersect(point,tempx[(j+1)%count],tempy[(j+1)%count],tempx[j],tempy[j],cx[i],cy[i],cx[(i+1)%cSize],cy[(i+1)%cSize] );
 
 			clipx[tcount] = point[0];
 			clipy[tcount] = point[1];
@@ -276,24 +241,20 @@ int clip(double xp[], double yp[], int size){
 			tcount++; 
 		}
 		else if(spointSide == 0 && epointSide == 0){//both on the line
-			printf("zero zero\n");
-			// clipx[tcount] = tempx[j];	
-			// clipy[tcount] = tempy[j];
-			// tcount++;
+			
 			clipx[tcount] = tempx[(j+1)%count];	
 			clipy[tcount] = tempy[(j+1)%count];
 			tcount++;
 		}
 		else if(epointSide == 0 && spointSide > 0){//end on line start inside 
-			//add end point to array
-			printf("end is 0\n");
+		
 			clipx[tcount] = tempx[(j+1)%count];	
 			clipy[tcount] = tempy[(j+1)%count];
 			tcount++; 
 		}
 
 		else if(epointSide == 0 && spointSide < 0){//end on line start outside 
-			printf("end is 0\n");
+		
 			clipx[tcount] = tempx[(j+1)%count];	
 			clipy[tcount] = tempy[(j+1)%count];
 			tcount++; 
@@ -327,11 +288,10 @@ int clip(double xp[], double yp[], int size){
 
 		}	
 	}
-	printf("final result \n");
+	
 	for(i=0; i<count;i++){
 		xp[i]=tempx[i];
 		yp[i]=tempy[i];
-		printf("x: %lf y: %lf \n", xp[i], yp[i]);
 	}
 	return count;
 
@@ -340,6 +300,8 @@ int clip(double xp[], double yp[], int size){
 void getClippingWindow(){
 	double coords[2];
 	int i = 0;
+	G_rgb(255,0,0);
+	G_fill_rectangle(0,0,40,40);
 while(1==1){
 G_wait_click(coords);
 if(coords[0] < 40 && coords[1] < 40){
@@ -347,7 +309,6 @@ if(coords[0] < 40 && coords[1] < 40){
 else{
 	cx[i] = coords[0];
 	cy[i] = coords[1];
-	// printf("coords x:%lf y:%lf", coords[0], coords[1]);
 	G_rgb(255,255,255);
 	G_fill_rectangle(coords[0],coords[1], 5,5);
 	center[0] += cx[i];
@@ -373,19 +334,6 @@ scaleNfit(argc);
 //intersectTest();
 display(0);
 getClippingWindow();
-// cx[0]=100;
-// cy[0]=200;
-// cx[1]=200;
-// cy[1]=200;
-// cx[2]=500;
-// cy[2]=500;
-// cx[3]= 200;
-// cy[3] = 500;
-// cSize=4;
-// center[0] = 300;
-// center[1] = 400;
-// G_rgb(255,0,0);
-// G_fill_rectangle(300,400,5,5);
 int num;
 while(1 == 1){
 	num = G_wait_key();
