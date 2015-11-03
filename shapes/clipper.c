@@ -149,7 +149,7 @@ void intersect(double ret[2], double x1,double y1,double x2,double y2,double x3,
 			printf("both points on same side\n");
 			break;
 		}
-		if(fabs((tx-ox)/2) < .000000001 && fabs((ty-oy)/2) <.0000000001 ) {
+		if(fabs((tx-ox)/2) < 0.01 && fabs((ty-oy)/2) < 0.01 ) {
 			ret[0]=tx;
 			ret[1]=ty;
 			return;
