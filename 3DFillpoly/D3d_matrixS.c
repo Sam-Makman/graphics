@@ -97,8 +97,7 @@ int D3d_translate (double a[4][4], double b[4][4], double dx, double dy, double 
 // a = translation*a  
 // b = b*translation_inverse  
 {
-  double t[4][4] ;
-
+  double t[4][4]; 
   D3d_make_identity(t) ;
 
   t[0][3] =  dx ;  t[1][3] = dy ;  t[2][3] = dz;
@@ -198,7 +197,20 @@ int D3d_cs_rotate_y (double a[4][4], double b[4][4], double cs, double sn){
 
 
 int D3d_cs_rotate_z (double a[4][4], double b[4][4], double cs, double sn){
-  return 0;
+    double rotate[4][4], r2[4][4] ;
+  D3d_make_identity(rotate);
+  D3d_make_identity(r2);
+  rotate[0][0] = cs;
+  rotate[0][1] = -sn;
+  rotate[1][0] = sn;
+  rotate[1][1] = cs;
+  D3d_mat_mult(a, rotate, a);
+  r2[0][0] = -cs;
+  r2[0][1] = sn;
+  r2[1][0] = -sn;
+  r2[1][1] = -cs;
+    D3d_mat_mult(b,b,r2 );
+  return 1;
 }
 // a = rotate*a  
 // b = b*rotate_inverse  
