@@ -151,14 +151,14 @@ int D3d_rotate_y (double a[4][4], double b[4][4], double radians){
   D3d_make_identity(rotate);
   D3d_make_identity(r2);
   rotate[0][0] = cos(radians);
-  rotate[0][2] = sin(radians);
-  rotate[2][0] = -sin(radians);
-  rotate[3][3] = cos(radians);
+  rotate[0][2] = -sin(radians);
+  rotate[2][0] = sin(radians);
+  rotate[2][2] = cos(radians);
   D3d_mat_mult(a, rotate, a);
   r2[0][0] = cos(-radians);
   r2[0][2] = -sin(-radians);
   r2[2][0] = sin(-radians);
-  r2[3][3] = cos(-radians);
+  r2[2][2] = cos(-radians);
   D3d_mat_mult(b,b,r2 );
   return 1;
 }//finished
@@ -291,6 +291,18 @@ int D3d_mat_mult_pt (double P[3],
 
 
 int D3d_x_product (double res[3], double a[3], double b[3]){
+  double result[3];
+  // printf("a = %lf, %lf, %lf \n", a[0], a[1], a[2]);
+  // printf("b = %lf, %lf, %lf \n", b[0], b[1], b[2]);
+  result[0] = (a[1]*b[2]) - (b[1]*a[2]);
+  result[1] = -(a[0]*b[2] - b[0]*a[2]);
+  result[2] = a[0]*b[1] - b[0]*a[1];
+
+  // printf("results %lf, %lf, %lf", result[0], result[1], result[2]);
+  res[0] = result[0];
+  res[1] = result[1];
+  res[2] = result[2];
+
   return 0;
 }
 // res = a x b  , cross product of two vectors
