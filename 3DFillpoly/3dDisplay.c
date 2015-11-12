@@ -3,8 +3,33 @@
 
 #define WINDOW_WIDTH 600
 #define ROTATE_SPEED .05 
+
+typedef
+struct {
+  int objnum;
+  int polynum;
+  double dist;
+}
+POLYGON;
+
 double x[20][15000], y[20][15000], z[20][15000], colors[20][15000][3];
 int numpoints[20], numpolys[20], poly_sizes[20][15000], polygons[20][15000][100];
+POLYGON polyLoc[20][15000];
+
+
+
+
+int compare (const void *p, const void *q)
+{
+  POLYGON *a, *b ;
+
+  a = (POLYGON*)p ;
+  b = (POLYGON*)q ;
+
+  if  (((*a).dist) < ((*b).dist)) return -1 ;
+  else if (((*a).dist) > ((*b).dist)) return 1 ;
+  else return 0 ;
+}
 
 void setUp(){
   G_init_graphics(WINDOW_WIDTH,WINDOW_WIDTH + 30);
@@ -38,6 +63,12 @@ for(i=1; i<argc; i++){
 			fscanf( f, "%d", &poly_sizes[i -1][k]);
 			for(j=0; j< poly_sizes[i -1][k];j++){
 				fscanf(f, "%d", &polygons[i -1][k][j]);
+				// polyLoc[i-1][k].objectnum=i-1;
+				// polyLoc[i-1][k].polynum=k;
+				// polyLoc[i-1][k].dist=z[i-1][polygons[i -1][k][j]];
+
+
+
 				// printf("polygons %d\n", polygons[i -1][k][j]);
 			}
 		}
@@ -181,7 +212,7 @@ void translate(int pnum, int axis, int direction){
 }
 
 void display(int pnum, int sign){
-	int i, j, k;
+	int i, j, k, m;
 	G_rgb(0,0,0);
 	G_clear();
 	G_clear(1,1,1);
@@ -190,8 +221,7 @@ void display(int pnum, int sign){
 		}else{
 			sign=1;
 		}
-		
-		printf("sign = %d \n ", sign);
+		for(pnum = 0; pnum<20; pnum++){
 // printf("enter disp\n");
 for(i=0;i<numpolys[pnum];i++){
 	double xtemp[poly_sizes[pnum][i]], ytemp[poly_sizes[pnum][i]],ztemp[poly_sizes[pnum][i]];
@@ -230,6 +260,7 @@ for(i=0;i<numpolys[pnum];i++){
  	G_polygon(xtemp, ytemp, poly_sizes[pnum][i]);
  	}
  }
+}
 }
 
 
