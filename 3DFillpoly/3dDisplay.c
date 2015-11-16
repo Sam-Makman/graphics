@@ -12,9 +12,10 @@ struct {
 }
 POLYGON;
 
-double x[20][15000], y[20][15000], z[20][15000], colors[20][15000][3];
-int numpoints[20], numpolys[20], poly_sizes[20][15000], polygons[20][15000][100];
-POLYGON polyLoc[20][15000];
+double x[20][15000], y[20][10000], z[20][10000], colors[20][10000][3];
+int numpoints[20], numpolys[20], poly_sizes[20][10000], polygons[20][10000][100];
+POLYGON polyLoc[200000];
+int plsize;
 
 
 
@@ -44,15 +45,14 @@ double dot_product( double a[3], double b[3]){
 
 
 void loadFiles(int argc, char ** argv){
-	printf("load files");
-int i,j,k;
+int i,j,k, m;
 FILE * f;
+m=0;
 for(i=1; i<argc; i++){
 	f = fopen(argv[i], "r");
 		if(f == NULL){
 			printf("Cannot open file %s \n", argv[i]);
 		}
-	printf("loading file\n");
 	fscanf(f , "%d", &numpoints[i -1]);
 	for(j=0; j< numpoints[i-1]; j++){
 		fscanf(f, "%lf %lf %lf", &x[i - 1][j], &y[i - 1][j], &z[i-1][j]);
@@ -63,19 +63,18 @@ for(i=1; i<argc; i++){
 			fscanf( f, "%d", &poly_sizes[i -1][k]);
 			for(j=0; j< poly_sizes[i -1][k];j++){
 				fscanf(f, "%d", &polygons[i -1][k][j]);
-				// polyLoc[i-1][k].objectnum=i-1;
-				// polyLoc[i-1][k].polynum=k;
-				// polyLoc[i-1][k].dist=z[i-1][polygons[i -1][k][j]];
-
-
-
-				// printf("polygons %d\n", polygons[i -1][k][j]);
+				polyLoc[m].objnum=i-1;
+				polyLoc[m].polynum=k;
+				polyLoc[m].dist=z[i-1][polygons[i -1][k][j]];
+				m++;
 			}
 		}
 		for(k=0; k<numpolys[i -1]; k++){
       		fscanf(f,"%lf %lf %lf", &colors[i -1][k][0], &colors[i -1][k][1],  &colors[i -1][k][2]);
     	}
 	}
+	qsort(polyLoc, m,sizeof(POLYGON),compare);
+	plsize = m;
 	fclose(f);
 }
 
@@ -194,6 +193,7 @@ void rotate(int pnum, int axis, int direction){
 }
 
 void translate(int pnum, int axis, int direction){
+	printf("begin translate \n");
 	double a[4][4], b[4][4];
  	D3d_make_identity(a);
  	D3d_make_identity(b);
@@ -209,6 +209,7 @@ void translate(int pnum, int axis, int direction){
  		D3d_translate(a , b, 0,0,1*sign );
  	}
  	D3d_mat_mult_points(x[pnum], y[pnum],z[pnum], a, x[pnum], y[pnum],z[pnum], numpoints[pnum]);
+ 	printf("end translate \n");
 }
 
 void display(int pnum, int sign){
@@ -223,45 +224,71 @@ void display(int pnum, int sign){
 		}
 		for(pnum = 0; pnum<20; pnum++){
 // printf("enter disp\n");
-for(i=0;i<numpolys[pnum];i++){
-	double xtemp[poly_sizes[pnum][i]], ytemp[poly_sizes[pnum][i]],ztemp[poly_sizes[pnum][i]];
-	// printf("New display\n");
+
+int n=0;
+
+for(n=0; n<plsize; n++){
+double xtemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
+double ytemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
+double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
+	printf("New display\n");
 	for(j=0; j<poly_sizes[pnum][i];j++){
- 		xtemp[j] = x[pnum][polygons[pnum][i][j]];
- 		ytemp[j] = y[pnum][polygons[pnum][i][j]];
- 		ztemp[j] = z[pnum][polygons[pnum][i][j]];
- 		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
+ 		xtemp[j] = x[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
+ 		ytemp[j] = y[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
+ 		ztemp[j] = z[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
+ 		printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
 	}
 	for(j=0; j<poly_sizes[pnum][i];j++){
 		xtemp[j] = xtemp[j]/ztemp[j];
 		ytemp[j] = ytemp[j]/ztemp[j];
 		xtemp[j] = (xtemp[j] * (300/tan(M_PI/3))) + 300;
 		ytemp[j] = (ytemp[j] * (300/tan(M_PI/3))) + 300;
-		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
+		printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
 		}
+		G_rgb(pnum%2,pnum%3, 1);
+ 		G_fill_polygon(xtemp, ytemp, poly_sizes[pnum][i]);
+ 	
+}
+}
+}
 
-		double perpendicular[3], first[3], second[3], origin[3];
-		first[0] = xtemp[0]-xtemp[1];
-		first[1] = ytemp[0]-ytemp[1];
-		first[2] = ztemp[0]-ztemp[1];
-		second[0] = xtemp[0]-xtemp[2];
-		second[1] = ytemp[0]-ytemp[2];
-		second[2] = ztemp[0]-ztemp[2];
-		origin[0] = 0 - xtemp[0];
-		origin[1] = 0 - xtemp[1];
-		origin[2] = 0 - xtemp[2];
+
+
+// for(i=0;i<numpolys[pnum];i++){
+// 	double xtemp[poly_sizes[pnum][i]], ytemp[poly_sizes[pnum][i]],ztemp[poly_sizes[pnum][i]];
+// 	// printf("New display\n");
+// 	for(j=0; j<poly_sizes[pnum][i];j++){
+//  		xtemp[j] = x[pnum][polygons[pnum][i][j]];
+//  		ytemp[j] = y[pnum][polygons[pnum][i][j]];
+//  		ztemp[j] = z[pnum][polygons[pnum][i][j]];
+//  		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
+// 	}
+// 	for(j=0; j<poly_sizes[pnum][i];j++){
+// 		xtemp[j] = xtemp[j]/ztemp[j];
+// 		ytemp[j] = ytemp[j]/ztemp[j];
+// 		xtemp[j] = (xtemp[j] * (300/tan(M_PI/3))) + 300;
+// 		ytemp[j] = (ytemp[j] * (300/tan(M_PI/3))) + 300;
+// 		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
+// 		}
+
+// 		double perpendicular[3], first[3], second[3], origin[3];
+// 		first[0] = xtemp[0]-xtemp[1];
+// 		first[1] = ytemp[0]-ytemp[1];
+// 		first[2] = ztemp[0]-ztemp[1];
+// 		second[0] = xtemp[0]-xtemp[2];
+// 		second[1] = ytemp[0]-ytemp[2];
+// 		second[2] = ztemp[0]-ztemp[2];
+// 		origin[0] = 0 - xtemp[0];
+// 		origin[1] = 0 - xtemp[1];
+// 		origin[2] = 0 - xtemp[2];
 		
-		D3d_x_product(perpendicular, first, second);
-		// printf("cross product  = %lf , %lf , %lf  \n",perpendicular[0] , perpendicular[1], perpendicular[2]);
-		if((sign * dot_product(perpendicular, origin )) < 90){//you can see the line
-			// printf("dot product = %lf \n", - qdot_product(perpendicular, origin ));
-
- 	G_rgb(1,0,0);
- 	G_polygon(xtemp, ytemp, poly_sizes[pnum][i]);
- 	}
- }
-}
-}
+	
+//  	G_rgb(pnum%2,pnum%3, 1);
+//  	G_fill_polygon(xtemp, ytemp, poly_sizes[pnum][i]);
+ 	
+//  }
+// }
+//}
 
 
 int main(int argc, char ** argv){
@@ -299,8 +326,10 @@ while(1 == 1){
 		axis = 2;
 	}
 	else if(num == 116){//translate 
-		translate(file, axis, direction);
+		printf("pre translate \n");
+		// translate(file, axis, direction);
 		display(file,sign);
+		printf("post translate \n");
 	}
 	else if(num == 99){//change translate direction
 		if(direction == 0){
