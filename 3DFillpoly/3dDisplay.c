@@ -257,7 +257,26 @@ double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 		ytemp[j] = (ytemp[j] * (300/tan(M_PI/3))) + 300;
 		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
 		}
-		G_rgb(polyLoc[n].objnum%2,polyLoc[n].objnum%3, 1);
+		double perpendicular[3], first[3], second[3], origin[3];
+		first[0] = xtemp[0]-xtemp[1];
+		first[1] = ytemp[0]-ytemp[1];
+		first[2] = ztemp[0]-ztemp[1];
+		second[0] = xtemp[0]-xtemp[2];
+		second[1] = ytemp[0]-ytemp[2];
+		second[2] = ztemp[0]-ztemp[2];
+		origin[0] = 0 - xtemp[0];
+		origin[1] = 0 - xtemp[1];
+		origin[2] = 0 - xtemp[2];
+
+		// D3d_x_product(perpendicular, first, second);
+		 // printf("cross product  = %lf , %lf , %lf  \n",perpendicular[0] , perpendicular[1], perpendicular[2]);
+		// double d = dot_product(perpendicular, origin );
+		// double o = sqrt((origin[0] * origin[0])+(origin[1] * origin[1])+(origin[2] * origin[2]));
+		// double p = sqrt((perpendicular[0]*perpendicular[0])+(perpendicular[1]*perpendicular[1])+(perpendicular[2]*perpendicular[2]));
+		// printf("d = %lf \n", d);
+		// double color = sign * acos(d/(o*p));
+		double color = xtemp[0]/600;
+		G_rgb(color,color,color);
  		G_fill_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
  	
 }
@@ -312,7 +331,7 @@ while(1 == 1){
 	}
 	else if(num == 116){//translate 
 		translate(file, axis, direction);
-		resize();
+		// resize();
 		display(file,sign);
 	}
 	else if(num == 99){//change translate direction
