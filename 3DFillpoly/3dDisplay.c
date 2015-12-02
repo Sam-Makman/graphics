@@ -215,8 +215,8 @@ double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 		second[0] = xtemp[0]-xtemp[2];
 		second[1] = ytemp[0]-ytemp[2];
 		second[2] = ztemp[0]-ztemp[2];
-		eye[0] = xtemp[0] - 300;
-		eye[1] = ytemp[0] - 300;
+		eye[0] = xtemp[0];
+		eye[1] = ytemp[0];
 		eye[2] = ztemp[0];
 		light[0]= xtemp[0] - lightx;
 		light[1]= ytemp[0] - lighty;
@@ -254,23 +254,36 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 		reflection[0] = ((2 * dot_product(perpendicular, light)) * perpendicular[0]) - light[0];
 		reflection[1] = ((2 * dot_product(perpendicular, light)) * perpendicular[1]) - light[1];
 		reflection[2] = ((2 * dot_product(perpendicular, light)) * perpendicular[2]) - light[2];
-		double specular = 0;
+		double specular;
 		if(dot_product(eye, reflection) < 0){ 
 			specular = 0;
 		}else {
 			specular = (1 - ambient - diffusepro) * pow((dot_product(eye, reflection)),specpow);	
 		}
-		double color = ambient + diffuse + specular;
-		double ad = ambient + diffuse;
-		if(intensity == ad){
-			G_rgb(red, green, blue);
-		}else if(intensity > ad){
-
-		}else if(intensity < ad){
-
+		double redt, greent, bluet;
+		if(ambient + diffuse <= ambient + diffusepro){
+			double yt = green;
+			double xt = red;
+			double zt = blue;
+			redt = ((ambient + diffuse)/(ambient + diffusepro))*red + specular;
+			greent = ((ambient + diffuse)/(ambient + diffusepro))*green + specular;
+			bluet = ((ambient + diffuse)/(ambient + diffusepro))*blue + specular;
 		}
-		G_rgb(color * red,color * green,color*blue);
+		else{
+			double yt = 1 - green;
+			double xt = 1 - red;
+			double m = xt/yt;
+			double b = green - (m * red);
+			redt = red + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*red + specular;
+			greent = green + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*green + specular;
+			bluet = blue + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*blue + specular;
+		}
+		double color = ambient + diffuse + specular;
+		// printf("ambient = %lf , diffues = %lf , specuar =%lf\n",ambient, diffuse, specular);
+		G_rgb(redt,greent,bluet);
  		G_fill_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
+ 		G_rgb(0,0,0);
+ 		G_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
 }
 }
 
@@ -293,9 +306,9 @@ int specpow;
 double diffusepro, ambient;
  diffusepro = .4;
  ambient = .2;
-double x = 100;
-double y=200;
-double z=-50;
+// double x = 100;
+// double y=200;
+// double z=-50;
  specpow = 70;
 red = 0;
 green = 0;
@@ -312,8 +325,8 @@ printf("enter light coordinates \n");
 scanf("%d %d %d", &x, &y, &z);
 printf("enter inital color");
 scanf("%lf %lf %lf", &red, &green, &blue);
-printf("enter intensity");
-scanf("%lf", &intensity);
+// printf("enter intensity");
+// scanf("%lf", &intensity);
 setUp();
 loadFiles(argc, argv);
 scaleNfit(argc);
