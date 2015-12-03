@@ -187,6 +187,7 @@ void display(int pnum, int sign, int specpow, double diffusepro, double ambient,
 	int i, j, k, m;
 	G_rgb(0,0,0);
 	G_clear();
+	double halfAngle = 30*M_PI/180;
 	G_clear(1,1,1);
 	if(sign == 0){
 			sign = -1;
@@ -215,8 +216,8 @@ double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 		second[0] = xtemp[0]-xtemp[2];
 		second[1] = ytemp[0]-ytemp[2];
 		second[2] = ztemp[0]-ztemp[2];
-		eye[0] = xtemp[0];
-		eye[1] = ytemp[0];
+		eye[0] = xtemp[0]-300;
+		eye[1] = ytemp[0]-300;
 		eye[2] = ztemp[0];
 		light[0]= xtemp[0] - lightx;
 		light[1]= ytemp[0] - lighty;
@@ -226,9 +227,8 @@ double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 		xtemp[j] = xtemp[j]/ztemp[j];
 		ytemp[j] = ytemp[j]/ztemp[j];
-		xtemp[j] = (xtemp[j] * (300/tan(M_PI/3))) + 300;
-		ytemp[j] = (ytemp[j] * (300/tan(M_PI/3))) + 300;
- 		// printf("X = %lf Y = %lf  Z = %lf \n",xtemp[j],ytemp[j], ztemp[j] );
+		xtemp[j] = (xtemp[j] * (300/tan(halfAngle))) + 300;
+		ytemp[j] = (ytemp[j] * (300/tan(halfAngle))) + 300;
 }
 
 		D3d_x_product(perpendicular, first, second);
@@ -255,32 +255,34 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 		reflection[1] = ((2 * dot_product(perpendicular, light)) * perpendicular[1]) - light[1];
 		reflection[2] = ((2 * dot_product(perpendicular, light)) * perpendicular[2]) - light[2];
 		double specular;
-		if(dot_product(eye, reflection) < 0){ 
-			specular = 0;
-		}else {
-			specular = (1 - ambient - diffusepro) * pow((dot_product(eye, reflection)),specpow);	
-		}
+	
+		specular = (1 - ambient - diffusepro) * pow((dot_product(eye, reflection)),specpow);	
+		
+		double intensity = ambient + diffuse + specular;
+
 		double redt, greent, bluet;
-		if(ambient + diffuse <= ambient + diffusepro){
-			double yt = green;
-			double xt = red;
-			double zt = blue;
-			redt = ((ambient + diffuse)/(ambient + diffusepro))*red + specular;
-			greent = ((ambient + diffuse)/(ambient + diffusepro))*green + specular;
-			bluet = ((ambient + diffuse)/(ambient + diffusepro))*blue + specular;
+		if(intensity <= ambient + diffusepro){
+			double f = intensity/ (ambient + diffusepro);
+			redt = f*red;
+			greent = f* green;
+			bluet = f*blue;
 		}
 		else{
-			double yt = 1 - green;
-			double xt = 1 - red;
-			double m = xt/yt;
-			double b = green - (m * red);
-			redt = red + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*red + specular;
-			greent = green + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*green + specular;
-			bluet = blue + (((ambient + diffuse)-(ambient + diffusepro))/(ambient + diffusepro))*blue + specular;
+			double I[3];
+			I[0] = 1-red;
+			I[1] = 1-green;
+			I[2] = 1-blue;
+			double f = (1-intensity)/ (1 - ambient - diffusepro);
+			redt = f*I[0] + red;
+			greent = f*I[1] + green;
+			bluet = f*I[2] + blue;
 		}
-		double color = ambient + diffuse + specular;
+		
+		// printf("color %lf\n",color );
+		// printf("Red = %lf , green = %lf bue = %lf \n", redt, greent, bluet);
 		// printf("ambient = %lf , diffues = %lf , specuar =%lf\n",ambient, diffuse, specular);
 		G_rgb(redt,greent,bluet);
+		// G_rgb(color,color,color);
  		G_fill_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
  		G_rgb(0,0,0);
  		G_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
@@ -304,27 +306,27 @@ int main(int argc, char ** argv){
 }
 int specpow;
 double diffusepro, ambient;
- diffusepro = .4;
+ diffusepro = .5;
  ambient = .2;
-// double x = 100;
-// double y=200;
-// double z=-50;
- specpow = 70;
-red = 0;
+int x = -100;
+int y=-200;
+int z=50;
+ specpow = 50;
+red = 1;
 green = 0;
-blue = 1;
+blue = 0;
 intensity = .4;
-printf("enter ambeint  > ");
-scanf("%lf", &ambient);
-printf("enter Diffuse  > ");
-scanf("%lf", &diffusepro);
-printf("enter specular  > ");
-scanf("%d", &specpow);
-int x,y,z;
-printf("enter light coordinates \n");
-scanf("%d %d %d", &x, &y, &z);
-printf("enter inital color");
-scanf("%lf %lf %lf", &red, &green, &blue);
+// printf("enter ambeint  > ");
+// scanf("%lf", &ambient);
+// printf("enter Diffuse  > ");
+// scanf("%lf", &diffusepro);
+// printf("enter specular  > ");
+// scanf("%d", &specpow);
+// int x,y,z;
+// printf("enter light coordinates \n");
+// scanf("%d %d %d", &x, &y, &z);
+// printf("enter inital color");
+// scanf("%lf %lf %lf", &red, &green, &blue);
 // printf("enter intensity");
 // scanf("%lf", &intensity);
 setUp();
