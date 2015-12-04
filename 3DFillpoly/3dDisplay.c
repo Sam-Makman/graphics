@@ -57,7 +57,6 @@ for(i=1; i<argc; i++){
 	fscanf(f , "%d", &numpoints[i -1]);
 	for(j=0; j< numpoints[i-1]; j++){
 		fscanf(f, "%lf %lf %lf", &x[i - 1][j], &y[i - 1][j], &z[i-1][j]);
-		// printf( "points %lf %lf  \n", x[i - 1][j], y[i - 1][j]);
 	}
 	fscanf( f, "%d", &numpolys[i -1]);
 		for(k = 0; k < numpolys[i -1]; k++){
@@ -68,7 +67,6 @@ for(i=1; i<argc; i++){
 				polyLoc[m].objnum=i-1;
 				polyLoc[m].polynum=k;
 				polyLoc[m].dist=z[i-1][polygons[i -1][k][0]];
-				// printf(" objnum %d , polynum %d , dist %lf \n", polyLoc[m].objnum, polyLoc[m].polynum, polyLoc[m].dist);
 				m++;
 		}
 		for(k=0; k<numpolys[i -1]; k++){
@@ -113,14 +111,11 @@ for(i=0; i<argc-1;i++){
 		}
 	}
 	xrad = (xmax - xmin)/2;
-	 // printf("xmax = %lf xmin = %lf \n",xmax, xmin );
 	yrad = (ymax - ymin)/2;
 	zrad = (zmax - zmin)/2;
-	 // printf("ymax = %lf ymin = %lf \n",ymax, ymin );
 	x[i][numpoints[i]+1] = xmax - xrad;
 	y[i][numpoints[i]+1] = ymax - yrad;
 	z[i][numpoints[i]+1] = zmax - zrad;
-	// printf("Xcenter = %lf Ycenter = %lf \n", xcenter, ycenter);
 	double s;
 	
 	if(xrad > yrad){
@@ -195,18 +190,15 @@ void display(int pnum, int sign, int specpow, double diffusepro, double ambient,
 			sign=1;
 		}
 int n=0;
-// printf("plsize = %d \n", plsize );
 for(n=0; n<plsize; n++){
-		// printf("n = %d \n",n);
 double xtemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 double ytemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
-	// printf("New display\n");
-	// printf("polysize = %d \n", poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
 	for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
  		xtemp[j] = x[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
  		ytemp[j] = y[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
  		ztemp[j] = z[polyLoc[n].objnum][polygons[polyLoc[n].objnum][polyLoc[n].polynum][j]];
+
  	
 	}
 		double perpendicular[3], first[3], second[3], eye[3], light[3],reflection[3];
@@ -244,16 +236,21 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 		eye[0] = eye[0]/eyelength;
 		eye[1] = eye[1]/eyelength;
 		eye[2] = eye[2]/eyelength;
-		if(dot_product(perpendicular, light) < 0){
-			perpendicular[0] = -1 * perpendicular[0];
+
+
+		double pl = dot_product(perpendicular, light);
+
+		if(pl < 0){
+			perpendicular[0] = -1 * perpendicular[0];	
 			perpendicular[1] = -1 * perpendicular[1];
 			perpendicular[2] = -1 * perpendicular[2];
+			pl = dot_product(perpendicular, light);
 		}
-		double diffuse = diffusepro * dot_product(perpendicular, light);
+		double diffuse = diffusepro * pl;
 
-		reflection[0] = ((2 * dot_product(perpendicular, light)) * perpendicular[0]) - light[0];
-		reflection[1] = ((2 * dot_product(perpendicular, light)) * perpendicular[1]) - light[1];
-		reflection[2] = ((2 * dot_product(perpendicular, light)) * perpendicular[2]) - light[2];
+		reflection[0] = ((2 * pl) * perpendicular[0]) - light[0];
+		reflection[1] = ((2 * pl) * perpendicular[1]) - light[1];
+		reflection[2] = ((2 * pl) * perpendicular[2]) - light[2];
 		double specular;
 	
 		specular = (1 - ambient - diffusepro) * pow((dot_product(eye, reflection)),specpow);	
@@ -278,11 +275,8 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 			bluet = f*I[2] + blue;
 		}
 		
-		// printf("color %lf\n",color );
-		// printf("Red = %lf , green = %lf bue = %lf \n", redt, greent, bluet);
-		// printf("ambient = %lf , diffues = %lf , specuar =%lf\n",ambient, diffuse, specular);
+		
 		G_rgb(redt,greent,bluet);
-		// G_rgb(color,color,color);
  		G_fill_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
  		G_rgb(0,0,0);
  		G_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
@@ -308,9 +302,9 @@ int specpow;
 double diffusepro, ambient;
  diffusepro = .5;
  ambient = .2;
-int x = -100;
-int y=-200;
-int z=50;
+int x = 0;
+int y=0;
+int z=0;
  specpow = 50;
 red = 1;
 green = 0;
