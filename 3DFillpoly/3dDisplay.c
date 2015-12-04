@@ -16,7 +16,7 @@ double x[20][10000], y[20][10000], z[20][10000], colors[20][10000][3];
 int numpoints[20], numpolys[20], poly_sizes[20][10000], polygons[20][10000][100];
 POLYGON polyLoc[200000];
 int plsize;
-double red, green, blue, intensity;
+double red, green, blue;
 
 
 
@@ -178,7 +178,9 @@ void translate(int pnum, int axis, int direction){
  	D3d_mat_mult_points(x[pnum], y[pnum],z[pnum], a, x[pnum], y[pnum],z[pnum], numpoints[pnum]);
 }
 
-void display(int pnum, int sign, int specpow, double diffusepro, double ambient, int lightx, int lighty, int lightz){
+
+
+void display(int pnum, int sign, int specpow, double diffusepro, double ambient, double lightx, double lighty, double lightz){
 	int i, j, k, m;
 	G_rgb(0,0,0);
 	G_clear();
@@ -208,19 +210,22 @@ double ztemp[poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]];
 		second[0] = xtemp[0]-xtemp[2];
 		second[1] = ytemp[0]-ytemp[2];
 		second[2] = ztemp[0]-ztemp[2];
-		eye[0] = xtemp[0]-300;
-		eye[1] = ytemp[0]-300;
-		eye[2] = ztemp[0];
-		light[0]= xtemp[0] - lightx;
-		light[1]= ytemp[0] - lighty;
-		light[2]= ztemp[0] - lightz;
+		eye[0] = 0 - xtemp[0] ;
+		eye[1] = 0 - ytemp[0] ;
+		eye[2] = 0 - ztemp[0];
+		light[0]= lightx - xtemp[0] ;
+		light[1]= lighty - ytemp[0] ;
+		light[2]= lightz - ztemp[0];
 
 
 for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
+
 		xtemp[j] = xtemp[j]/ztemp[j];
 		ytemp[j] = ytemp[j]/ztemp[j];
 		xtemp[j] = (xtemp[j] * (300/tan(halfAngle))) + 300;
 		ytemp[j] = (ytemp[j] * (300/tan(halfAngle))) + 300;
+
+
 }
 
 		D3d_x_product(perpendicular, first, second);
@@ -246,6 +251,12 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 			perpendicular[2] = -1 * perpendicular[2];
 			pl = dot_product(perpendicular, light);
 		}
+
+
+		double pe = dot_product(perpendicular, eye);
+		double intensity;
+                if (pe < 0) { intensity = ambient ; goto JJJ ; }
+
 		double diffuse = diffusepro * pl;
 
 		reflection[0] = ((2 * pl) * perpendicular[0]) - light[0];
@@ -255,9 +266,12 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 	
 		specular = (1 - ambient - diffusepro) * pow((dot_product(eye, reflection)),specpow);	
 		
-		double intensity = ambient + diffuse + specular;
+		 intensity = ambient + diffuse + specular;
 
+
+ JJJ : ;
 		double redt, greent, bluet;
+
 		if(intensity <= ambient + diffusepro){
 			double f = intensity/ (ambient + diffusepro);
 			redt = f*red;
@@ -269,14 +283,18 @@ for(j=0; j<poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum];j++){
 			I[0] = 1-red;
 			I[1] = 1-green;
 			I[2] = 1-blue;
-			double f = (1-intensity)/ (1 - ambient - diffusepro);
+			double f = (intensity - ambient - diffusepro)/ (1 - ambient - diffusepro);
 			redt = f*I[0] + red;
 			greent = f*I[1] + green;
 			bluet = f*I[2] + blue;
 		}
-		
-		
+	
+	
+
+
+		//	printf("red = %lf   green = %lf  blue = %lf  intensity = %lf\n",redt,greent,bluet, intensity) ;		
 		G_rgb(redt,greent,bluet);
+		// G_rgb(intensity,intensity,intensity) ;
  		G_fill_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
  		G_rgb(0,0,0);
  		G_polygon(xtemp, ytemp, poly_sizes[polyLoc[n].objnum][polyLoc[n].polynum]);
@@ -302,14 +320,14 @@ int specpow;
 double diffusepro, ambient;
  diffusepro = .5;
  ambient = .2;
-int x = 0;
-int y=0;
-int z=0;
- specpow = 50;
+double x = -200;
+double y=-100;
+double z=50;
+ specpow = 70;
 red = 1;
 green = 0;
 blue = 0;
-intensity = .4;
+
 // printf("enter ambeint  > ");
 // scanf("%lf", &ambient);
 // printf("enter Diffuse  > ");
