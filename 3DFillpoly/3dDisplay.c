@@ -398,24 +398,24 @@ int main(int argc, char ** argv){
 }
 int specpow;
 double diffusepro, ambient;
- // diffusepro = .5;
- // ambient = .2;
+ diffusepro = .5;
+ ambient = .2;
 double x = -200;
 double y=-100;
 double z=50;
- // specpow = 70;
+ specpow = 70;
 // red = 1;
 // green = 0;
 // blue = 0;
 
-printf("enter ambeint  > ");
-scanf("%lf", &ambient);
-printf("enter Diffuse  > ");
-scanf("%lf", &diffusepro);
-printf("enter specular  > ");
-scanf("%d", &specpow);
-printf("enter light coordinates \n");
-scanf("%lf %lf %lf", &x, &y, &z);
+// printf("enter ambeint  > ");
+// scanf("%lf", &ambient);
+// printf("enter Diffuse  > ");
+// scanf("%lf", &diffusepro);
+// printf("enter specular  > ");
+// scanf("%d", &specpow);
+// printf("enter light coordinates \n");
+// scanf("%lf %lf %lf", &x, &y, &z);
 
 int i = 0;
 for(i=0;i< argc-1;i++){
